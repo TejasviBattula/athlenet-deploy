@@ -34,3 +34,17 @@ REST_FRAMEWORK = {
 }
 SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(hours=4), 'REFRESH_TOKEN_LIFETIME': timedelta(days=7)}
 CORS_ALLOW_ALL_ORIGINS = True
+
+# ---- Deployment settings ----
+import os
+
+SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [o for o in os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:5174,http://localhost:5175').split(',') if o]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+if 'whitenoise.middleware.WhiteNoiseMiddleware' not in MIDDLEWARE:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
